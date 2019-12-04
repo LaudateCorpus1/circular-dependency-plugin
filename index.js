@@ -8,6 +8,7 @@ class CircularDependencyPlugin {
     this.options = extend({
       exclude: new RegExp('$^'),
       include: new RegExp('.*'),
+      ignoreInCycle: [],
       failOnError: false,
       allowAsyncCycles: false,
       onDetected: false,
@@ -93,6 +94,8 @@ class CircularDependencyPlugin {
       if (!depModule) { continue }
       // ignore dependencies that don't have an associated resource
       if (!depModule.resource) { continue }
+      // ignore dependencies that match ignoreInCycle option
+      if (this.options.ignoreInCycle.some(ignoreInCycleRegex => ignoreInCycleRegex.test(depModule.resource))) { continue }
       // ignore dependencies that are resolved asynchronously
       if (this.options.allowAsyncCycles && dependency.weak) { continue }
 
